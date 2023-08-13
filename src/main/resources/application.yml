@@ -1,0 +1,14 @@
+# Dubbo configurations
+dubbo:
+  application:
+    name: protobuf-client-demo
+    qos-enable: false
+  registry:
+    address: nacos://localhost:8848
+  consumer:
+    timeout: 40000
+    retries: 5
+    actives: 10
+
+dubbo-service-version:
+  protobuf-server-demo: 1.0.0
