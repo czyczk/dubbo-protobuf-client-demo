@@ -1,0 +1,1 @@
+protocolDetectionFilter=com.example.dubboprotobufclientdemo.integration.filter.ProtocolDetectionFilter

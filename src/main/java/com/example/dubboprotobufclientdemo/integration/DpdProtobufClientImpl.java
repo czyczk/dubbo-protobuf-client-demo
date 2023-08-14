@@ -12,7 +12,7 @@ import com.example.dubboprotobufserverdemo.facade.PingResponse;
 @Service
 public class DpdProtobufClientImpl implements DpdProtobufClient {
 
-    @DubboReference(version = "${dubbo-service-version.protobuf-server-demo}", check = true, protocol = "tri")
+    @DubboReference(version = "${dubbo-service-version.protobuf-server-demo}", check = true, protocol = "tri", filter = "protocolDetectionFilter")
     private DpdProtobufFacade dpdProtobufFacade;
 
     @Override
