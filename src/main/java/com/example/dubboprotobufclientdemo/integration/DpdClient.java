@@ -1,6 +1,7 @@
 package com.example.dubboprotobufclientdemo.integration;
 
 import com.example.dubboprotobufserverdemo.common.model.Llm;
+import org.apache.dubbo.common.stream.StreamObserver;
 
 public interface DpdClient {
 
@@ -9,6 +10,8 @@ public interface DpdClient {
     void createLlm(Llm llm);
 
     Llm getLlm(String id);
+
+    StreamObserver<Integer> sumStream(StreamObserver<Integer> response);
 
     void throwException();
 

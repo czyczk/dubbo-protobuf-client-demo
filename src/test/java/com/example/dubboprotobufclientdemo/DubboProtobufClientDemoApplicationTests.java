@@ -13,6 +13,9 @@ import com.example.dubboprotobufserverdemo.util.converter.LlmConverter;
 
 import cn.hutool.core.lang.Assert;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 @SpringBootTest
 class DubboProtobufClientDemoApplicationTests {
 
@@ -28,10 +31,12 @@ class DubboProtobufClientDemoApplicationTests {
 	}
 
 	@Test
-	public void testStandardDpdClientImpl() {
+	public void testStandardDpdClientImpl() throws InterruptedException {
+		// Test ping()
 		String pong = dpdClientImpl.ping();
 		Assert.equals("pong", pong);
 
+		// Test getLlm()
 		Llm expectedLlm = new Llm();
 		expectedLlm.setId("chatgpt");
 		expectedLlm.setName("ChatGPT");
@@ -40,6 +45,35 @@ class DubboProtobufClientDemoApplicationTests {
 
 		Llm actualLlm = dpdClientImpl.getLlm(expectedLlm.getId());
 		Assert.equals(expectedLlm, actualLlm);
+
+		// Test sumStream()
+		CountDownLatch countDownLatch = new CountDownLatch(2);
+		StreamObserver<Integer> sumStreamRequest = dpdClientImpl.sumStream(new StreamObserver<>() {
+			@Override
+			public void onNext(Integer data) {
+				System.out.println("response onNext: " + data);
+				Assert.equals(6, data);
+				countDownLatch.countDown();
+			}
+
+			@Override
+			public void onError(Throwable throwable) {
+				System.out.println("response onError: " + throwable.getMessage());
+				countDownLatch.countDown();
+				throw new RuntimeException(throwable);
+			}
+
+			@Override
+			public void onCompleted() {
+				System.out.println("response onCompleted");
+				countDownLatch.countDown();
+			}
+		});
+
+		sumStreamRequest.onNext(1);
+		sumStreamRequest.onNext(2);
+		sumStreamRequest.onNext(3);
+		countDownLatch.await(10, TimeUnit.SECONDS);
 	}
 
 	@Test

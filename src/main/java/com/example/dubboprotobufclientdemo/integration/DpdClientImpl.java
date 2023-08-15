@@ -1,5 +1,6 @@
 package com.example.dubboprotobufclientdemo.integration;
 
+import org.apache.dubbo.common.stream.StreamObserver;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,11 @@ public class DpdClientImpl implements DpdClient {
     @Override
     public Llm getLlm(String id) {
         return dpdFacade.getLlm(id);
+    }
+
+    @Override
+    public StreamObserver<Integer> sumStream(StreamObserver<Integer> response) {
+        return dpdFacade.sumStream(response);
     }
 
     @Override
