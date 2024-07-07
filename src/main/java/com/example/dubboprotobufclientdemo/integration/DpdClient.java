@@ -11,6 +11,8 @@ public interface DpdClient {
 
     Llm getLlm(String id);
 
+    Llm getLlmTimeConsuming(String id, long duration);
+
     StreamObserver<Integer> sumStream(StreamObserver<Integer> response);
 
     void throwException();

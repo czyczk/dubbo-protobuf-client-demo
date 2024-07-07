@@ -28,6 +28,10 @@ public class DpdClientImpl implements DpdClient {
         return dpdFacade.getLlm(id);
     }
 
+    public Llm getLlmTimeConsuming(String id, long duration) {
+        return dpdFacade.getLlmTimeConsuming(id, duration);
+    }
+
     @Override
     public StreamObserver<Integer> sumStream(StreamObserver<Integer> response) {
         return dpdFacade.sumStream(response);

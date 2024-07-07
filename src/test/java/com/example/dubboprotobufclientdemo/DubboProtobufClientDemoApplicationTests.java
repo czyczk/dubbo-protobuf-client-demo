@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.dubboprotobufclientdemo.integration.DpdClientImpl;
 import com.example.dubboprotobufclientdemo.integration.DpdProtobufClientImpl;
+import com.example.dubboprotobufclientdemo.integration.DpdReactiveClientImpl;
 import com.example.dubboprotobufserverdemo.common.model.Llm;
 import com.example.dubboprotobufserverdemo.facade.GetLlmRequest;
 import com.example.dubboprotobufserverdemo.util.converter.LlmConverter;
@@ -24,6 +25,9 @@ class DubboProtobufClientDemoApplicationTests {
 
 	@Autowired
 	private DpdProtobufClientImpl dpdProtobufClientImpl;
+
+	@Autowired
+	private DpdReactiveClientImpl dpdReactiveClientImpl;
 
 	@Test
 	public void testSanity() {
@@ -45,6 +49,12 @@ class DubboProtobufClientDemoApplicationTests {
 
 		Llm actualLlm = dpdClientImpl.getLlm(expectedLlm.getId());
 		Assert.equals(expectedLlm, actualLlm);
+
+		long startTime = System.currentTimeMillis();
+		actualLlm = dpdClientImpl.getLlmTimeConsuming(expectedLlm.getId(), 200);
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		Assert.equals(expectedLlm, actualLlm);
+		Assert.isTrue(elapsedTime >= 200);
 
 		// Test sumStream()
 		CountDownLatch countDownLatch = new CountDownLatch(2);
@@ -101,6 +111,27 @@ class DubboProtobufClientDemoApplicationTests {
 		Llm actualLlm = LlmConverter.toDomainLlm(
 				dpdProtobufClientImpl.getLlm(getLlmRequest).getLlm());
 		Assert.equals(expectedLlm, actualLlm);
+	}
+
+	@Test
+	public void testDpdReactiveClientImpl() {
+		String pong = dpdReactiveClientImpl.ping().block();
+		Assert.equals("pong", pong);
+
+		Llm expectedLlm = new Llm();
+		expectedLlm.setId("chatgpt");
+		expectedLlm.setName("ChatGPT");
+		expectedLlm.setCompany("OpenAI");
+		expectedLlm.setOpenSource(false);
+
+		Llm actualLlm = dpdReactiveClientImpl.getLlm(expectedLlm.getId()).block();
+		Assert.equals(expectedLlm, actualLlm);
+
+		long startTime = System.currentTimeMillis();
+		actualLlm = dpdReactiveClientImpl.getLlmTimeConsuming(expectedLlm.getId(), 200).block();
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		Assert.equals(expectedLlm, actualLlm);
+		Assert.isTrue(elapsedTime >= 200);
 	}
 
 }
