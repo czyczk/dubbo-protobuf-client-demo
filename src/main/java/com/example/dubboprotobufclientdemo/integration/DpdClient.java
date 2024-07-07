@@ -10,6 +10,8 @@ public interface DpdClient {
 
     Llm getLlm(String id);
 
+    Llm getLlmTimeConsuming(String id, long duration);
+
     void throwException();
 
 }

@@ -28,6 +28,11 @@ public class DpdClientImpl implements DpdClient {
     }
 
     @Override
+    public Llm getLlmTimeConsuming(String id, long duration) {
+        return dpdFacade.getLlmTimeConsuming(id, duration);
+    }
+
+    @Override
     public void throwException() {
         dpdFacade.throwException();
     }
